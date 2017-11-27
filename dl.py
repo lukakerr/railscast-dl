@@ -1,4 +1,5 @@
 from BeautifulSoup import BeautifulSoup
+import argparse
 import urllib
 import time
 import sys
@@ -56,6 +57,16 @@ def reporthook(count, block_size, total_size):
   sys.stdout.flush()
 
 if __name__ == "__main__":
-  start(free_pages, "free")
-  start(pro_pages, "pro")
-  start(revised_pages, "revised")
+  parser = argparse.ArgumentParser(description='download railscast episodes')
+  
+  parser.add_argument('-t', '--type',
+    help='type of episodes to download: free, pro or revised')
+  
+  args = parser.parse_args()
+  
+  if not len(sys.argv) > 1:
+    start(free_pages, "free")
+    start(free_pages, "pro")
+    start(free_pages, "revised")
+  else:
+    start(free_pages, "%s" % args.type)
