@@ -4,8 +4,6 @@ import time
 import sys
 import os
 
-current_dir = os.getcwd()
-
 class colors:
   BLUE = "\033[94m"
   GREEN = "\033[92m"
@@ -19,8 +17,10 @@ revised_pages = 6
 video_url = "http://media.railscasts.com/assets/episodes/videos/"
 video_format = ".mp4"
 
-def start(pagination_length, video_type):
-  for page in range(1, pagination_length+1):
+current_dir = os.getcwd()
+
+def start(pages, video_type):
+  for page in range(1, pages+1):
     url = "http://railscasts.com/?page=%s&type=%s" % (page, video_type)
     data = urllib.urlopen(url).read()
     soup = BeautifulSoup(data)
@@ -35,18 +35,18 @@ def find_links(div, video_type):
     download(video_name, video_type)
 
 def download(name, video_type):
-  print "\n\n" + colors.BLUE + "Downloading " + colors.RESET + video_url + name
+  print "\n\n%sDownloading %s%s%s" % (colors.BLUE, colors.RESET, video_url, name)
   file_dir = "%s/%s" % (current_dir, video_type)
   if not os.path.exists(file_dir):
     os.makedirs(file_dir)
-  urllib.URLopener().retrieve(video_url + name, file_dir + "/" + name, reporthook)
-  print colors.GREEN + "\nDone!" + colors.RESET
+  urllib.URLopener().retrieve(video_url + name, "%s/%s" % (file_dir, name), reporthook)
+  print "%s\nDone!%s" % (colors.GREEN, colors.RESET)
 
 def reporthook(count, block_size, total_size):
   global start_time
   if count == 0:
-      start_time = time.time()
-      return
+    start_time = time.time()
+    return
   duration = time.time() - start_time
   progress_size = int(count * block_size)
   speed = int(progress_size / (1024 * duration))
